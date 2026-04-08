@@ -15,7 +15,23 @@ from sqlalchemy import (
 )
 from sqlalchemy.engine import Engine
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+def _database_url() -> Optional[str]:
+    direct_url = os.getenv("DATABASE_URL")
+    if direct_url:
+        return direct_url
+
+    host = os.getenv("DB_HOST")
+    port = os.getenv("DB_PORT", "5432")
+    name = os.getenv("DB_NAME")
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
+
+    if all([host, name, user, password]):
+        return f"postgresql://{user}:{password}@{host}:{port}/{name}"
+    return None
+
+
+DATABASE_URL = _database_url()
 
 engine: Optional[Engine] = create_engine(DATABASE_URL) if DATABASE_URL else None
 
@@ -40,9 +56,11 @@ predictions = Table(
 )
 
 
-def init_db() -> None:
+def init_db() -> bool:
     if engine:
         metadata.create_all(engine)
+        return True
+    return False
 
 
 def insert_prediction(

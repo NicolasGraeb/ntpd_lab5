@@ -5,13 +5,9 @@ from pydantic import BaseModel
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 
-from db import init_db, insert_prediction, list_predictions as list_db_predictions
+from db import insert_prediction, list_predictions as list_db_predictions
 
 app = FastAPI()
-
-@app.on_event("startup")
-def _startup() -> None:
-    init_db()
 
 
 def _pole_z_lokalizacji(loc):

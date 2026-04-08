@@ -4,6 +4,8 @@ __pycache__
 .git
 .gitignore
 screeny
+screeny/
 *.md
 .pytest_cache
 .mypy_cache
+*.png
